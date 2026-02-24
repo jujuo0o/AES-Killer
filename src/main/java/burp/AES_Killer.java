@@ -5,6 +5,8 @@
  */
 package burp;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.net.URL;
 import javax.swing.JOptionPane;
 
@@ -70,14 +72,26 @@ public class AES_Killer extends javax.swing.JPanel {
         jCheckBox8 = new javax.swing.JCheckBox();
         jCheckBox13 = new javax.swing.JCheckBox();
         jCheckBox14 = new javax.swing.JCheckBox();
+        jCheckBoxEncryptionDataType = new javax.swing.JCheckBox();
         jPanel4 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
+        scrollPane = new javax.swing.JScrollPane(jPanel5);
         jLabel1 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox();
         jLabel2 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
+        
+        // Decryption 
+        jLabelSecretDec = new javax.swing.JLabel();
+        jSecretKeyDec = new javax.swing.JTextField();
+        jLabelIVDec = new javax.swing.JLabel();
+        jIVKeyDec = new javax.swing.JTextField();
+        jCheckBoxDec = new javax.swing.JCheckBox();
+        // End Decryption
+        
+        
         jCheckBox1 = new javax.swing.JCheckBox();
         jPanel9 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
@@ -209,6 +223,8 @@ public class AES_Killer extends javax.swing.JPanel {
         jCheckBox13.setName("isDebug"); // NOI18N
 
         jCheckBox14.setText("URL encode/decode");
+        
+        jCheckBoxEncryptionDataType.setText("CipherText is Hex");
 
         javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
         jPanel12.setLayout(jPanel12Layout);
@@ -219,6 +235,7 @@ public class AES_Killer extends javax.swing.JPanel {
                 .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jCheckBox8)
                     .addComponent(jCheckBox14)
+                    .addComponent(jCheckBoxEncryptionDataType)
                     .addComponent(jCheckBox13))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -229,6 +246,8 @@ public class AES_Killer extends javax.swing.JPanel {
                 .addComponent(jCheckBox8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCheckBox14)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBoxEncryptionDataType)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jCheckBox13)
                 .addContainerGap())
@@ -292,19 +311,41 @@ public class AES_Killer extends javax.swing.JPanel {
 
         jLabel1.setText("Select Encryption");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AES/CBC/PKCS5Padding", "AES/ECB/PKCS5Padding" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AES/CBC/PKCS7Padding", "AES/ECB/PKCS7Padding", "AES/CBC/PKCS5Padding", "AES/ECB/PKCS5Padding", "DES/CBC/PKCS7Padding", "DES/ECB/PKCS7Padding","DES/CBC/PKCS5Padding", "DES/ECB/PKCS5Padding","DESede/CBC/PKCS5Padding", "DESede/ECB/PKCS5Padding", }));
         jComboBox1.setName("encryption_type"); // NOI18N
 
-        jLabel2.setText("Secret Key (Base64 Encoded)");
+        jLabel2.setText("Secret Key - Request (Base64 Encoded)");
+        jLabelSecretDec.setText("Secret Key - Response (Base64 Encoded)");
 
         jTextField1.setName("secretKey"); // NOI18N
+        jSecretKeyDec.setName("secretKeyDec"); // NOI18N
 
-        jLabel3.setText("IV (Base64 Encoded)");
+        jLabel3.setText("IV - Request (Base64 Encoded)");
+        jLabelIVDec.setText("IV - Response (Base64 Encoded)");
 
         jTextField2.setName("iv"); // NOI18N
+        jIVKeyDec.setName("ivDec"); // NOI18N
 
         jCheckBox1.setText("Exclude / Ignore IV");
         jCheckBox1.setName("excludeIV"); // NOI18N
+        
+        jCheckBoxDec.setText("Use Same Keys for Response Decryption");
+        jCheckBoxDec.setName("excludeDecKeys");
+        
+        jCheckBoxDec.addItemListener(new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+		        if (e.getStateChange() == ItemEvent.SELECTED) {
+		        	update_dec_usage(true);
+		        }else {
+		        	update_dec_usage(false);
+		        }
+				
+			}
+        	
+        	
+        });
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -316,12 +357,17 @@ public class AES_Killer extends javax.swing.JPanel {
                     .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jTextField1)
                     .addComponent(jTextField2)
+                    .addComponent(jSecretKeyDec)
+                    .addComponent(jIVKeyDec)
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3)
-                            .addComponent(jCheckBox1))
+                            .addComponent(jLabelSecretDec)
+                            .addComponent(jLabelIVDec)
+                            .addComponent(jCheckBox1)
+                            .addComponent(jCheckBoxDec))
                         .addGap(0, 204, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -336,17 +382,27 @@ public class AES_Killer extends javax.swing.JPanel {
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+                .addComponent(jLabelSecretDec)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSecretKeyDec, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+                .addComponent(jLabelIVDec)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jIVKeyDec, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
                 .addComponent(jCheckBox1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+                .addComponent(jCheckBoxDec)
                 .addContainerGap())
         );
-
-        jPanel4.add(jPanel5);
-        jPanel5.setBounds(8, 7, 423, 270);
+        scrollPane = new javax.swing.JScrollPane(jPanel5);
+        scrollPane.setBounds(8, 7, 423, 270);
+        jPanel4.add(scrollPane);
+//        jPanel5.setBounds(8, 7, 423, 270);
 
         jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
@@ -577,6 +633,13 @@ public class AES_Killer extends javax.swing.JPanel {
         add(jSplitPane1);
     }// </editor-fold>//GEN-END:initComponents
 
+    public void update_dec_usage(Boolean inUse) {
+    		
+    	this._burpObj._exclude_dec_keys = inUse;
+    	return;
+    	
+    }
+    
     public Boolean is_string_empty(String _str){
         if(_str.length() == 0 || _str.isEmpty() || _str.equals("") || _str == null){
             return true;
@@ -598,11 +661,12 @@ public class AES_Killer extends javax.swing.JPanel {
             return false;
         }
     }
-    
+    // Encryption
     public Boolean validate_secret_key(){
         String _secret_key = this.jTextField1.getText().trim();
         if(is_string_empty(_secret_key)){ JOptionPane.showMessageDialog(this, "Please provide a Secret Key !!!"); return false; }
         this._burpObj._secret_key = _secret_key;
+        validate_dec_secret_key();
         return true;
     }
     
@@ -615,8 +679,33 @@ public class AES_Killer extends javax.swing.JPanel {
         String _iv_param = this.jTextField2.getText().trim();
         if(is_string_empty(_iv_param)){ JOptionPane.showMessageDialog(this, "Please provide a IV Parameter !!!"); return false; }
         this._burpObj._iv_param = _iv_param;
+        validate_dec_iv_param();
         return true;
     }
+    // End Encryption
+    
+    // Decryption
+    public Boolean validate_dec_secret_key(){
+        String _secret_key_dec = this.jSecretKeyDec.getText().trim();
+        if(is_string_empty(_secret_key_dec)){ return false; }
+        this._burpObj._secret_key_dec = _secret_key_dec;
+        return true;
+    }
+    
+    public Boolean validate_dec_iv_param(){
+    	
+        if(this.jCheckBox1.isSelected()){
+            this._burpObj._exclude_iv = true;
+            return true;
+        }
+
+        String _iv_param_dec = this.jIVKeyDec.getText().trim();
+        if(is_string_empty(_iv_param_dec)){ return false; }
+        this._burpObj._iv_param_dec = _iv_param_dec;
+        return true;
+    }
+    // End Decryption
+    
     
     public Boolean validate_Obff(){
         if(!this.jCheckBox8.isSelected()){
@@ -638,6 +727,14 @@ public class AES_Killer extends javax.swing.JPanel {
     public Boolean validate_url_ed(){
         if(this.jCheckBox14.isSelected()){
             this._burpObj._url_enc_dec = true;
+        }
+        return true;
+    }
+    
+
+    public Boolean validate_ciphertext_type(){
+        if(this.jCheckBoxEncryptionDataType.isSelected()){
+            this._burpObj._ciphertext_is_hex = true;
         }
         return true;
     }
@@ -725,7 +822,7 @@ public class AES_Killer extends javax.swing.JPanel {
         // Validate Obff + URL
         if(!validate_Obff()) { return; }
         if(!validate_url_ed()) { return; }
-        
+        if(!validate_ciphertext_type()) { return; }
         // Validate Debug Mode
         validate_debug_mode();
         
@@ -776,19 +873,27 @@ public class AES_Killer extends javax.swing.JPanel {
         if (is_string_empty(_txt)) { JOptionPane.showMessageDialog(this, "Please provide data to encrypt !!!"); return; }
         
         if(this._burpObj.isRunning){
-            this.jTextArea2.setText(this._burpObj.do_encrypt(_txt));
+            if (this.jCheckBoxDec.isSelected()) {
+                this.jTextArea2.setText(this._burpObj.do_encrypt(_txt, false));
+            }
+            this.jTextArea2.setText(this._burpObj.do_encrypt(_txt, true));
         }
         else{
             // Validate encryption / decryption input
             this._burpObj._enc_type = String.valueOf(this.jComboBox1.getSelectedItem());
+            this._burpObj._dec_type = String.valueOf(this.jComboBox1.getSelectedItem());
             if(!validate_secret_key()) { return; }
             if(!validate_iv_param()) { return; }
 
             // Validate Obff + URL
             if(!validate_Obff()) { return; }
             if(!validate_url_ed()) { return; }
-            
-            this.jTextArea2.setText(this._burpObj.do_encrypt(_txt));
+            if(!validate_ciphertext_type()) { return; }
+
+            if (this.jCheckBoxDec.isSelected()) {
+                this.jTextArea2.setText(this._burpObj.do_encrypt(_txt, false));
+            }
+            this.jTextArea2.setText(this._burpObj.do_encrypt(_txt, true));
         }
         
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -799,7 +904,10 @@ public class AES_Killer extends javax.swing.JPanel {
         if (is_string_empty(_txt)) { JOptionPane.showMessageDialog(this, "Please provide data to decrypt !!!"); return; }
         
         if(this._burpObj.isRunning){
-            this.jTextArea2.setText(this._burpObj.do_decrypt(_txt));
+            if (this.jCheckBoxDec.isSelected()) {
+                this.jTextArea2.setText(this._burpObj.do_decrypt(_txt, false));
+            }
+            this.jTextArea2.setText(this._burpObj.do_decrypt(_txt, true));
         }
         else{
             // Validate encryption / decryption input
@@ -810,8 +918,11 @@ public class AES_Killer extends javax.swing.JPanel {
             // Validate Obff + URL
             if(!validate_Obff()) { return; }
             if(!validate_url_ed()) { return; }
-            
-            this.jTextArea2.setText(this._burpObj.do_decrypt(_txt));
+            if(!validate_ciphertext_type()) { return; }
+            if (this.jCheckBoxDec.isSelected()) {
+                this.jTextArea2.setText(this._burpObj.do_decrypt(_txt, false));
+            }
+            this.jTextArea2.setText(this._burpObj.do_decrypt(_txt, true));
         }
     }//GEN-LAST:event_jButton4ActionPerformed
 
@@ -827,12 +938,14 @@ public class AES_Killer extends javax.swing.JPanel {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JCheckBox jCheckBoxDec;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox10;
     private javax.swing.JCheckBox jCheckBox11;
     private javax.swing.JCheckBox jCheckBox12;
     private javax.swing.JCheckBox jCheckBox13;
     private javax.swing.JCheckBox jCheckBox14;
+    private javax.swing.JCheckBox jCheckBoxEncryptionDataType;
     private javax.swing.JCheckBox jCheckBox15;
     private javax.swing.JCheckBox jCheckBox16;
     private javax.swing.JCheckBox jCheckBox17;
@@ -853,10 +966,12 @@ public class AES_Killer extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel jLabelSecretDec;
+    private javax.swing.JLabel jLabelIVDec;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -865,6 +980,7 @@ public class AES_Killer extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
+    private javax.swing.JScrollPane scrollPane;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane1;
@@ -879,5 +995,7 @@ public class AES_Killer extends javax.swing.JPanel {
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
     private javax.swing.JTextField jTextField7;
+    private javax.swing.JTextField jSecretKeyDec;
+    private javax.swing.JTextField jIVKeyDec;
     // End of variables declaration//GEN-END:variables
 }

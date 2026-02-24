@@ -319,6 +319,11 @@
                         <Property name="text" type="java.lang.String" value="URL encode/decode"/>
                       </Properties>
                     </Component>
+                    <Component class="javax.swing.JCheckBox" name="jCheckBoxEncryptionDataType">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="CipherText is Hex"/>
+                      </Properties>
+                    </Component>
                   </SubComponents>
                 </Container>
               </SubComponents>
@@ -405,8 +410,14 @@
                       <Properties>
                         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                           <StringArray count="2">
-                            <StringItem index="0" value="AES/CBC/PKCS5Padding"/>
-                            <StringItem index="1" value="AES/ECB/PKCS5Padding"/>
+                            <StringItem index="0" value="AES/CBC/PKCS7Padding"/>
+                            <StringItem index="1" value="AES/ECB/PKCS7Padding"/>
+                            <StringItem index="2" value="AES/CBC/PKCS5Padding"/>
+                            <StringItem index="3" value="AES/ECB/PKCS5Padding"/>
+                            <StringItem index="4" value="DES/CBC/PKCS7Padding"/>
+                            <StringItem index="5" value="DES/CBC/PKCS7Padding"/>
+                            <StringItem index="4" value="DES/CBC/PKCS5Padding"/>
+                            <StringItem index="5" value="DES/CBC/PKCS5Padding"/>
                           </StringArray>
                         </Property>
                         <Property name="name" type="java.lang.String" value="encryption_type" noResource="true"/>
@@ -414,7 +425,7 @@
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel2">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Secret Key (Base64 Encoded)"/>
+                        <Property name="text" type="java.lang.String" value="Secret Key - Encryption (Base64 Encoded)"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="jTextField1">
@@ -424,7 +435,7 @@
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel3">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="IV (Base64 Encoded)"/>
+                        <Property name="text" type="java.lang.String" value="IV - Encryption (Base64 Encoded)"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="jTextField2">
@@ -432,10 +443,36 @@
                         <Property name="name" type="java.lang.String" value="iv" noResource="true"/>
                       </Properties>
                     </Component>
+                    <Component class="javax.swing.JLabel" name="jLabelSecretDec">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Secret Key - Decryption (Base64 Encoded)"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="jSecretKeyDec">
+                      <Properties>
+                        <Property name="name" type="java.lang.String" value="secretKeyDec" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabelIVDec">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="IV - Decryption (Base64 Encoded)"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="jIVKeyDec">
+                      <Properties>
+                        <Property name="name" type="java.lang.String" value="ivDec" noResource="true"/>
+                      </Properties>
+                    </Component>
                     <Component class="javax.swing.JCheckBox" name="jCheckBox1">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Exclude / Ignore IV"/>
                         <Property name="name" type="java.lang.String" value="excludeIV" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="jCheckBoxDec">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Use Same Keys for Decryption"/>
+                        <Property name="name" type="java.lang.String" value="excludeDecKeys" noResource="true"/>
                       </Properties>
                     </Component>
                   </SubComponents>
